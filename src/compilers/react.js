@@ -44,10 +44,14 @@ module.exports = function (options, cb) {
 
     const react = context.meta.env === 'prod' ? [
       '<script crossorigin src="https://unpkg.com/react@16/umd/react.production.min.js"></script>',
-      '<script crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.production.min.js"></script>'
+      '<script crossorigin src="https://unpkg.com/react-router-dom@4.3.1/umd/react-router-dom.min.js"></script>',
+      '<script crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.production.min.js"></script>',
+      '<script crossorigin src="https://unpkg.com/auth0-js@9.8.1/dist/auth0.min.js"></script>'
     ] : [
       '<script crossorigin src="https://unpkg.com/react@16/umd/react.development.js"></script>',
-      '<script crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>'
+      '<script crossorigin src="https://unpkg.com/react-router-dom@4.3.1/umd/react-router-dom.js"></script>',
+      '<script crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>',
+      '<script crossorigin src="https://unpkg.com/auth0-js@9.8.1/dist/auth0.js"></script>'
     ];
 
     transpile((err, bundle) => {
