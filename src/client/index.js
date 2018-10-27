@@ -144,12 +144,35 @@ class CallBack extends Component {
   }
 }
 
+class Introduction extends Component {
+  render() {
+    return (
+      <div className="container">
+        <h1>Hi!</h1>
+      </div>
+    );
+  }
+}
+
+class Foo extends Component {
+  render() {
+    return (
+      <div className="container">
+        <h1>Foo</h1>
+      </div>
+    );
+  }
+}
+
 class HomePage extends Component {
   render() {
     return (
       <AppContext.Consumer>
-        {() => {
-          return (<h1>Hi!</h1>);
+        {({isAuthenticated}) => {
+          if(isAuthenticated())
+            return (<Foo />);
+          else
+            return (<Introduction />);
         }}
       </AppContext.Consumer>
     );
