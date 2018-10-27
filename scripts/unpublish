@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+echo "unpublish"
+
+wt rm compiler-static
+wt rm compiler-static-javascript
+wt rm compiler-react
+
+wt rm oidc-api
+wt rm oidc-client
+
+echo ""

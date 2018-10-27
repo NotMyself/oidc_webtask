@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+
+./scripts/unpublish
+
+CONTAINER=$(wt profile get -f container)
+URL="https://$CONTAINER.sandbox.auth0-extend.com"
+
+echo "Publish to $URL"
+
+echo "Publishing Compilers"
+
+wt create src/compilers/static.js --name compiler-static
+
+wt create src/compilers/javascript.js --name compiler-static-javascript \
+ --meta wt-compiler=$URL/compiler-static \
+ --meta CONTENT_TYPE=application/javascript
+
+wt create src/compilers/react.js --name compiler-react \
+  --meta wt-compiler=$URL/compiler-static-javascript
+
+echo "Publishing Webtasks"
+
+wt create src/api/index.js --name oidc-api \
+  --secrets-file src/api/.env \
+  --meta-file src/api/.meta
+
+  wt create src/client/index.js --name oidc-client \
+  --secrets-file src/client/.env \
+  --meta-file src/client/.meta \
+  --meta wt-compiler=$URL/compiler-react \
+  --meta API_URL=$URL/oidc-api
