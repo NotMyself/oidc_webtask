@@ -22,6 +22,7 @@ echo "Publishing Webtasks"
 
 wt create src/api/index.js --name oidc-api \
   --secrets-file src/api/.env \
+  --secret AUTH0_AUDIENCE=$URL/oidc-api \
   --meta-file src/api/.meta
 
   wt create src/client/index.js --name oidc-client \

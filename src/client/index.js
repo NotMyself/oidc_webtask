@@ -14,12 +14,37 @@ class AppProvider extends Component {
 
     this.auth0 = new WebAuth({
       domain: this.state.secrets.AUTH0_DOMAIN,
-      audience: `https://${this.state.secrets.AUTH0_DOMAIN}/userinfo`,
+      audience: this.state.meta.API_URL,
       clientID: this.state.secrets.AUTH0_CLIENT_ID,
       redirectUri: `${window.location.origin}/oidc-client/callback`,
       responseType: 'token id_token',
-      scope: 'openid profile'
+      scope: 'openid profile read:jokes'
     });
+  }
+
+  getJoke() {
+    fetch(this.state.meta.API_URL, {
+      headers: new Headers({
+        'Authorization': `Bearer ${this.state.accessToken}`
+      })
+    })
+    .then(response => {
+      if(response.status === 401)
+        M.toast({
+          html:`<span><b>${response.status}</b> ${response.statusText}</span>`,
+          classes: 'red',
+          displayLength: 3000
+        });
+      else
+        return response.json();
+    })
+    .then(joke => this.setState({ joke }))
+    .catch(err => M.toast({
+        html:`<span><b>Error:</b> ${err.message}</span>`,
+        classes: 'red',
+        displayLength: 3000
+      })
+    );
   }
 
   isAuthenticated() {
@@ -64,7 +89,8 @@ class AppProvider extends Component {
         isAuthenticated: this.isAuthenticated.bind(this),
         handleAuthentication: this.handleAuthentication.bind(this),
         onLogin: this.onLogin.bind(this),
-        onLogout: this.onLogout.bind(this)
+        onLogout: this.onLogout.bind(this),
+        getJoke: this.getJoke.bind(this)
         }}>
         { this.props.children }
       </AppContext.Provider>
@@ -155,10 +181,17 @@ class Introduction extends Component {
 }
 
 class Foo extends Component {
+  constructor(props) {
+    super(props)
+  }
+
   render() {
     return (
       <div className="container">
         <h1>Foo</h1>
+        <a className="waves-effect waves-light btn green" onClick={this.props.onJokeClick}>
+          <i className="material-icons right">child_care</i>Get Joke
+        </a>
       </div>
     );
   }
@@ -168,11 +201,11 @@ class HomePage extends Component {
   render() {
     return (
       <AppContext.Consumer>
-        {({isAuthenticated}) => {
+        {({isAuthenticated, getJoke}) => {
           if(isAuthenticated())
-            return (<Foo />);
+            return (<Foo onJokeClick={getJoke} />);
           else
-            return (<Introduction />);
+            return (<Introduction onJokeClick={getJoke} />);
         }}
       </AppContext.Consumer>
     );
