@@ -47,7 +47,77 @@ class AppProvider extends Component {
       responseType: 'token id_token',
       scope: 'openid profile read:jokes'
     });
+
+    this.renewToken();
   }
+
+  isAuthenticated() {
+    return new Date().getTime() < this.state.expiresAt;
+  }
+
+  handleAuthentication() {
+    if(this.isAuthenticated())
+      return Promise.resolve();
+
+    return new Promise((resolve, reject) => {
+      this.auth0.parseHash((err, result) => {
+        if (err) return reject(err);
+        this.setSession(result);
+        resolve();
+      });
+    });
+  }
+
+  setSession(result) {
+    this.setState({
+      idToken: result.idToken,
+      accessToken: result.accessToken,
+      profile: result.idTokenPayload,
+      expiresAt: result.expiresIn * 1000 + new Date().getTime(),
+      authError: false
+    });
+    this.scheduleRenewal();
+  }
+
+  renewToken() {
+    this.auth0.checkSession({}, (err, result) => {
+        if (err) {
+          console.log(err);
+        } else {
+          this.setSession(result);
+        }
+      }
+    );
+  }
+
+  scheduleRenewal() {
+    if(this.isAuthenticated()) {
+      const delay = this.state.expiresAt - Date.now();
+      if (delay > 0) {
+        this.setState({tokenRenewalTimeout: setTimeout(() => {
+          this.renewToken();
+        }, delay)});
+      }
+    }
+  }
+
+  onLogin() {
+    this.auth0.authorize();
+  };
+
+  onLogout() {
+    this.setState({
+      idToken: null,
+      accessToken: null,
+      profile: null,
+      expiresAt: null,
+      tokenRenewalTimeout: null
+    });
+
+    this.auth0.logout({
+      returnTo: `${window.location.origin}/oidc-client`
+    });
+  };
 
   getJoke() {
     fetch(this.state.meta.API_URL, {
@@ -75,42 +145,6 @@ class AppProvider extends Component {
       })
     );
   }
-
-  isAuthenticated() {
-    return new Date().getTime() < this.state.expiresAt;
-  }
-
-  handleAuthentication() {
-    if(this.isAuthenticated())
-      return Promise.resolve();
-
-    return new Promise((resolve, reject) => {
-      this.auth0.parseHash((err, result) => {
-        if (err) return reject(err);
-        this.setState({
-          idToken: result.idToken,
-          accessToken: result.accessToken,
-          profile: result.idTokenPayload,
-          expiresAt: result.expiresIn * 1000 + new Date().getTime(),
-          authError: false
-        });
-        resolve();
-      });
-    });
-  }
-
-  onLogin() {
-    this.auth0.authorize();
-  };
-
-  onLogout() {
-    this.setState({
-      idToken: null,
-      accessToken: null,
-      profile: null,
-      expiresAt: null
-    });
-  };
 
   render() {
     return (
