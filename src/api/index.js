@@ -32,6 +32,7 @@ app.use(jwt({
 app.get('/', jwtAuthz([ 'read:jokes' ]), function (req, res) {
   request.get(req.webtaskContext.meta.DAD_JOKE_API_URL)
     .then(joke => {
+      joke.image = 'https://cdn.auth0.com/website/assets/pages/about/img/leadership/eugenio_pace-1bfa3230d1.jpg';
       res.send(joke);
     })
     .catch(err => {

@@ -1,6 +1,29 @@
 const { Component } = React;
 const { BrowserRouter, Route } = ReactRouterDOM;
 const { WebAuth } = auth0;
+const { css } = emotion;
+
+const SpeechBubble = styled('div')`
+  position: relative;
+  background: #ebf1f6;
+  border-radius: .4em;
+  padding: 10px;
+  z-index: 100;
+  &:after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 75%;
+    width: 0;
+    height: 0;
+    border: 20px solid transparent;
+    border-bottom-color: #ebf1f6;
+    border-top: 0;
+    border-left: 0;
+    margin-left: -10px;
+    margin-top: -20px;
+  }
+`;
 
 const AppContext = React.createContext();
 
@@ -9,7 +32,11 @@ class AppProvider extends Component {
     super(props);
 
     this.state = {
-      ...window.WebtaskContext
+      ...window.WebtaskContext,
+      jokes:[{
+        joke:'First you get the token, then you call the API.',
+        image: 'https://cdn.auth0.com/website/assets/pages/about/img/leadership/eugenio_pace-1bfa3230d1.jpg'
+      }]
     };
 
     this.auth0 = new WebAuth({
@@ -38,7 +65,7 @@ class AppProvider extends Component {
       else
         return response.json();
     })
-    .then(joke => this.setState({ joke }))
+    .then(joke => joke && this.setState({ jokes : this.state.jokes.concat([joke]) }))
     .catch(err => M.toast({
         html:`<span><b>Error:</b> ${err.message}</span>`,
         classes: 'red',
@@ -170,44 +197,66 @@ class CallBack extends Component {
   }
 }
 
-class Introduction extends Component {
-  render() {
-    return (
-      <div className="container">
-        <h1>Hi!</h1>
-      </div>
-    );
-  }
-}
-
-class Foo extends Component {
-  constructor(props) {
-    super(props)
-  }
-
-  render() {
-    return (
-      <div className="container">
-        <h1>Foo</h1>
-        <a className="waves-effect waves-light btn green" onClick={this.props.onJokeClick}>
-          <i className="material-icons right">child_care</i>Get Joke
-        </a>
-      </div>
-    );
-  }
-}
-
 class HomePage extends Component {
   render() {
     return (
       <AppContext.Consumer>
-        {({isAuthenticated, getJoke}) => {
-          if(isAuthenticated())
-            return (<Foo onJokeClick={getJoke} />);
-          else
-            return (<Introduction onJokeClick={getJoke} />);
+        {({profile, jokes, getJoke}) => {
+          return (<Cards profile={profile} jokes={jokes} onJokeClick={getJoke} />);
         }}
       </AppContext.Consumer>
+    );
+  }
+}
+
+class Introduction extends Component {
+  render() {
+    return (
+    <div>
+      Hi!
+    </div>
+    );
+  }
+}
+
+class Cards extends Component {
+  constructor(props){
+    super(props)
+    console.log(props.profile);
+  }
+
+  render() {
+    return (
+      <div className="container">
+        <div className="row">
+            {this.props.jokes.map((e) => {
+              return (
+                <div className="col s3" key={e.id || 'default'}>
+                  <div className="card medium">
+                    <div className="card-image">
+                      <img src={e.image}></img>
+                      <span className="card-title">Eugenio Says:</span>
+                    </div>
+                    <div className="card-content">
+                      <SpeechBubble>
+                        <p>{ this.props.profile && e.id ? `${this.props.profile.name}, ${e.joke}` : e.joke}</p>
+                      </SpeechBubble>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+            {
+              this.props.jokes.length == 1 ?
+                (<Introduction />) : ''
+            }
+        </div>
+        <div className="row">
+          <a className="waves-effect waves-light btn green" onClick={this.props.onJokeClick}>
+            <i className="material-icons right">child_care</i>Get Joke
+          </a>
+        </div>
+      </div>
     );
   }
 }
