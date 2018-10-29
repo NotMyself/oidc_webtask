@@ -56,12 +56,14 @@ class AppProvider extends Component {
       })
     })
     .then(response => {
-      if(response.status === 401)
+      if(response.status === 401) {
+        this.setState({authError: true});
         M.toast({
           html:`<span><b>${response.status}</b> ${response.statusText}</span>`,
           classes: 'red',
           displayLength: 3000
         });
+      }
       else
         return response.json();
     })
@@ -89,7 +91,8 @@ class AppProvider extends Component {
           idToken: result.idToken,
           accessToken: result.accessToken,
           profile: result.idTokenPayload,
-          expiresAt: result.expiresIn * 1000 + new Date().getTime()
+          expiresAt: result.expiresIn * 1000 + new Date().getTime(),
+          authError: false
         });
         resolve();
       });
@@ -201,8 +204,8 @@ class HomePage extends Component {
   render() {
     return (
       <AppContext.Consumer>
-        {({profile, jokes, getJoke}) => {
-          return (<Cards profile={profile} jokes={jokes} onJokeClick={getJoke} />);
+        {({profile, jokes}) => {
+          return (<Cards profile={profile} jokes={jokes} />);
         }}
       </AppContext.Consumer>
     );
@@ -212,9 +215,48 @@ class HomePage extends Component {
 class Introduction extends Component {
   render() {
     return (
-    <div>
-      Hi!
+    <div className="col s9">
+      <div className="section">
+        <h5>The Wisdom of Eugenio Pace</h5>
+        <p>Any Auziro can tell you that a presentation from Eugenio is going to
+          include the phrase, <b>"First you get the token, then you call the API."</b>
+          It may be included several times in several contexts.</p>
+        <p>For more nuggets of wisdom from Eugenio, <b>simply click the button.</b></p>
+      </div>
+      <AppContext.Consumer>
+        {({authError}) => {
+          if(authError)
+          return (
+            <div className="section red-text">
+              <h5>Authorization Error</h5>
+              <p >Looks like you missed the first bit of
+                Eugenio's wisdom. You must get a token then call the API.</p>
+              <p><b>Try loggining in first.</b></p>
+            </div>
+          );
+        }}
+      </AppContext.Consumer>
+      <div className="divider"></div>
+      <div className="section">
+        <JokeButton />
+      </div>
     </div>
+    );
+  }
+}
+
+class JokeButton extends Component {
+  render() {
+    return (
+      <AppContext.Consumer>
+        {({ getJoke }) => {
+          return (
+            <a className="waves-effect waves-light btn green" onClick={getJoke}>
+            <i className="material-icons right">child_care</i>Get Joke
+          </a>
+          );
+        }}
+      </AppContext.Consumer>
     );
   }
 }
@@ -247,13 +289,24 @@ class Cards extends Component {
             })}
             {
               this.props.jokes.length == 1 ?
-                (<Introduction />) : ''
+                (<Introduction />) :
+                (
+                  <div className="col s3" key="button">
+                  <div className="card small">
+                    <div className="card-content">
+                      <span className="card-title">Want More?</span>
+                      <p>For another nugget of wisdom, click the button.</p>
+                    </div>
+                    <div className="card-action">
+                      <JokeButton/>
+                    </div>
+                  </div>
+                </div>
+                )
             }
         </div>
         <div className="row">
-          <a className="waves-effect waves-light btn green" onClick={this.props.onJokeClick}>
-            <i className="material-icons right">child_care</i>Get Joke
-          </a>
+
         </div>
       </div>
     );
