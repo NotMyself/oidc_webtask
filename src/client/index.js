@@ -222,7 +222,6 @@ class Introduction extends Component {
 class Cards extends Component {
   constructor(props){
     super(props)
-    console.log(props.profile);
   }
 
   render() {
