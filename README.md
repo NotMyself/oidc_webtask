@@ -12,18 +12,18 @@ A Sample webtask project that uses Auth0's OIDC Provider for authentication.
 1. Install [Node v8.2.1 or Above](https://nodejs.org/en/).
 2. Install [Visual Studio Code](https://code.visualstudio.com/), the [Insiders Edition](https://code.visualstudio.com/insiders) is highly recommended.
 3. Install the [WT-CLI](https://www.npmjs.com/package/wt-cli).
-  - You will need to initalize the cli, `wt init`.
+    - You will need to initalize the cli, `wt init`.
 
 ### Configuring an Auth0 Application & API
 1. Signup for an Auth0 Account. 
-  - Free Tier works fine.
+    - Free Tier works fine.
 2. Create an [Application](https://manage.auth0.com/#/applications) with the following settings.
-  - **Name:** OIDC Demo
-  - **Type:** Single Page Web Application
-  - **Allowed Callback URLs:** https://\<YOUR WEBTASK CONTAINER>.sandbox.auth0-extend.com/oidc-client/callback
-3.  Create an [API](https://manage.auth0.com/#/apis) with the following settings:
-  -  **Name:** OIDC API
-  -  **Identifier:** https://\<YOUR WEBTASK CONTAINER>.sandbox.auth0-extend.com/oidc-api
+    - **Name:** OIDC Demo
+    - **Type:** Single Page Web Application
+    - **Allowed Callback URLs:** https://\<YOUR WEBTASK CONTAINER>.sandbox.auth0-extend.com/oidc-client/callback
+3. Create an [API](https://manage.auth0.com/#/apis) with the following settings:
+    - **Name:** OIDC API
+    - **Identifier:** https://\<YOUR WEBTASK CONTAINER>.sandbox.auth0-extend.com/oidc-api
 4. Add a Scope to the OIDC API of `read:jokes`.
 
 ### Deploying The Webtask
@@ -48,7 +48,7 @@ The output will look like this:
 The task I was given was to build a secure Webtask, and add an OIDC provider 
 to secure it and do a brief write up on your process and the decisions you made.
 
-@jcenturion and I had previously worked with a prototype webtask compiler that 
+[@jcenturion](https://github.com/jcenturion) and I had previously worked with a prototype webtask compiler that 
 allowed you to write React components directly in the webtask editor and have 
 it served up as a SPA style website. I decided to use this technique to present 
 a frontend that could consume a secured webtask backend API.
