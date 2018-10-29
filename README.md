@@ -4,7 +4,7 @@
 
 A Sample webtask project that uses Auth0's OIDC Provider for authentication.
 
-[Demo](https://wt-3f533296d128037c9af8381221f78dd6-0.sandbox.auth0-extend.com/oidc-client/) - Give it a try.
+[Live Demo](https://wt-3f533296d128037c9af8381221f78dd6-0.sandbox.auth0-extend.com/oidc-client/) - Give it a try.
 
 ## Getting Started
 
