@@ -14,6 +14,18 @@ A Sample webtask project that uses Auth0's OIDC Provider for authentication.
 3. Install the [WT-CLI](https://www.npmjs.com/package/wt-cli).
   - You will need to initalize the cli, `wt init`.
 
+### Configuring an Auth0 Application & API
+1. Signup for an Auth0 Account. 
+  - Free Tier works fine.
+2. Create an [Application](https://manage.auth0.com/#/applications) with the following settings.
+  - **Name:** OIDC Demo
+  - **Type:** Single Page Web Application
+  - **Allowed Callback URLs:** https://\<YOUR WEBTASK CONTAINER>.sandbox.auth0-extend.com/oidc-client/callback
+3.  Create an [API](https://manage.auth0.com/#/apis) with the following settings:
+  -  **Name:** OIDC API
+  -  **Identifier:** https://\<YOUR WEBTASK CONTAINER>.sandbox.auth0-extend.com/oidc-api
+4. Add a Scope to the OIDC API of `read:jokes`.
+
 ### Deploying The Webtask
 1. Clone the repository: `git clone https://github.com/NotMyself/oidc_webtask.git`
 2. Change directory into the cloned repository `cd oidc_webtask`.
